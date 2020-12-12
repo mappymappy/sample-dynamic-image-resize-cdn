@@ -18,8 +18,8 @@
 
 | parameterName | type | description |
 |:---|:---:|---:|
-|width |int |5~1024 |
-|height |int |5~1024 |
+|width |int |5~1280 |
+|height |int |5~1280 |
 
 # デプロイ
 
