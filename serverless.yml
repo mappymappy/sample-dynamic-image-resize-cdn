@@ -1,0 +1,106 @@
+service: sls-image-resizer
+plugins:
+  - serverless-plugin-cloudfront-lambda-edge
+  - serverless-plugin-scripts
+provider:
+  name: aws
+  runtime: nodejs12.x
+  region: us-east-1
+  role: LambdaEdgeRole
+  stage: ${opt:stage}
+package:
+  exclude:
+    - mock
+    - test
+functions:
+  execute:
+    handler: handler.execute
+    timeout: 6 #default
+    memorySize: 1024
+    lambdaAtEdge:
+      distribution: "TargetDistribution"
+      eventType: "origin-request"
+resources:
+  Resources:
+    LambdaEdgeRole:
+      Type: AWS::IAM::Role
+      Properties:
+        AssumeRolePolicyDocument:
+          Statement:
+            - Effect: Allow
+              Principal:
+                Service:
+                  - lambda.amazonaws.com
+                  - edgelambda.amazonaws.com
+              Action:
+                - sts:AssumeRole
+        Policies:
+          - PolicyName: "IconImageResizeLambda"
+            PolicyDocument:
+              Version: "2012-10-17"
+              Statement:
+                - Effect: "Allow"
+                  Action:
+                    - "s3:GetObject"
+                  Resource:
+                    - arn:aws:s3:::${self:custom.environment.${self:provider.stage}.s3.bucket_name}/icon/*  #NOTE: @see env_sample.yml
+        ManagedPolicyArns:
+          - "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+
+    TargetDistribution:
+      Type: "AWS::CloudFront::Distribution"
+      Properties:
+        DistributionConfig:
+          Aliases:
+            - ${self:custom.environment.${self:provider.stage}.cloudfront.aliases} #NOTE: @see env_sample.yml
+          DefaultCacheBehavior:
+            TargetOriginId: "ImageBucketOrigin"
+            ViewerProtocolPolicy: "redirect-to-https"
+            DefaultTTL: 31536000 # お好みで
+            MaxTTL: 31536000     # お好みで
+            Compress: true
+            ForwardedValues:
+              QueryString: true
+              Cookies:
+                Forward: "none"
+          Enabled: true
+          PriceClass: "PriceClass_100" # アジア圏からのアクセスがメインの場合PriceClass_200を推奨します
+          HttpVersion: "http2"
+          ViewerCertificate:
+            SslSupportMethod: "sni-only"
+            AcmCertificateArn: "" ${self:custom.environment.${self:provider.stage}.cloudfront.acm} # NOTE: @see env_sample.yml
+          Origins:
+            - DomainName: ${self:custom.environment.${self:provider.stage}.s3.bucket_name}.s3.amazonaws.com #NOTE: @see env_sample.yml
+              Id: ImageBucketOrigin
+              S3OriginConfig:
+                OriginAccessIdentity: !Sub origin-access-identity/cloudfront/${CloudFrontOriginAccessIdentity}
+          CustomErrorResponses: # NegativeCacheのTTL指定。お好みで。
+            - ErrorCode: 400
+              ErrorCachingMinTTL: 0
+            - ErrorCode: 403
+              ErrorCachingMinTTL: 0
+            - ErrorCode: 404
+              ErrorCachingMinTTL: 0
+            - ErrorCode: 405
+              ErrorCachingMinTTL: 0
+            - ErrorCode: 500
+              ErrorCachingMinTTL: 0
+            - ErrorCode: 502
+              ErrorCachingMinTTL: 0
+            - ErrorCode: 503
+              ErrorCachingMinTTL: 0
+            - ErrorCode: 504
+              ErrorCachingMinTTL: 0
+    CloudFrontOriginAccessIdentity: # NOTE:OAIの生成。お好みでs3に設定ください
+      Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
+      Properties:
+        CloudFrontOriginAccessIdentityConfig:
+          Comment: OAI for ${self:provider.stage}
+custom:
+  defaultStage: sample
+  environment:
+    sample: ${file(./env_sample.yml)}
+  scripts:
+    hooks:
+      # NOTE:デプロイする前に必ずLinux用のSharpをインストールしないといけない(実行環境の違いでエラーがでる 'darwin-x64' binaries cannot be used on the 'linux-x64' platform. Please remove the 'node_modules/sharp')
+      "package:initialize": "rm -rf node_modules/sharp && npm install --arch=x64 --platform=linux --target=12.5.0 sharp"

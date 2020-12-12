@@ -1,0 +1,29 @@
+{
+  "name": "sample-dynamic-image-resize-cdn",
+  "version": "1.0.0",
+  "description": "This is a sample image conversion CDN that uses AWS CloudFront and Lambda@Edge",
+  "main": "handler.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "format": "prettier --write '*.js'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mappymappy/sample-dynamic-image-resize-cdn.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mappymappy/sample-dynamic-image-resize-cdn/issues"
+  },
+  "homepage": "https://github.com/mappymappy/sample-dynamic-image-resize-cdn#readme",
+  "dependencies": {
+    "aws-sdk": "^2.800.0",
+    "sharp": "^0.26.3"
+  },
+  "devDependencies": {
+    "prettier": "^2.2.1",
+    "serverless-plugin-cloudfront-lambda-edge": "2.1.0",
+    "serverless-plugin-scripts": "1.0.2"
+  }
+}

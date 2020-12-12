@@ -1,0 +1,5 @@
+s3:
+  bucket_name: "originにしたいs3名を入力してください" #NOTE: originにしたいs3のbucket名に変更ください
+cloudfront:
+  aliases: "ドメイン名" #NOTE: リクエストを受けたいドメイン名に変更ください
+  acm: "ドメインの証明書のarn" #NOTE: ドメインの証明書のARNに変更ください
