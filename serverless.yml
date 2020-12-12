@@ -1,4 +1,4 @@
-service: sls-image-resizer
+service: sample-image-resizer
 plugins:
   - serverless-plugin-cloudfront-lambda-edge
   - serverless-plugin-scripts

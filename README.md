@@ -36,12 +36,11 @@ npm install --save-dev --save-exact serverless-plugin-cloudfront-lambda-edge
 ```
 export AWS_ACCESS_KEY_ID=xxxxx
 export AWS_SECRET_ACCESS_KEY=xxxxxx
-export AWS_DEFAULT_REGION=us-west-2
+export AWS_DEFAULT_REGION=ap-northeast-1
 ```
 
-インストールが終わったら、以下でリリース可能ですが、
-serverless.yml内にdummyで記載されているBucket名やリソースを自身のアカウントの
-物に書き換えてみてください。
+env_sample.yml内にdummyで記載されているBucket名やリソースを自身のアカウントの
+物に書き換えた後は以下のコマンドでデプロイ可能です
 
 ```
 sls deploy --stage sample

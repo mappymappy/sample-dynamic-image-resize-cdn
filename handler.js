@@ -15,7 +15,7 @@ module.exports.execute = (event, context, callback) => {
   const path = decodeURIComponent(request.uri).substr(1);
   const query = querystring.parse(request.querystring);
   // validate
-  const validationResult = validation.validate(request, path, query);
+  const validationResult = validation.validate(request, query);
   if (!validationResult.success) {
     return context.succeed(responseFactory.badRequest());
   }

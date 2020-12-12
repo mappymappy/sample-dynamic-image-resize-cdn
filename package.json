@@ -5,7 +5,8 @@
   "main": "handler.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "format": "prettier --write '*.js'"
+    "format": "prettier --write '*.js'",
+    "lint": "eslint './*.js'"
   },
   "repository": {
     "type": "git",
