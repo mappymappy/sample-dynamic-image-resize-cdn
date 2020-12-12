@@ -9,8 +9,7 @@
 
 # 全体像
 
-![overview](https://user-images.githubusercontent.com/6446570/101973309-7ade5580-3c7a-11eb-87c9-6cb0879af8b3.jpg)
-
+![over](https://user-images.githubusercontent.com/6446570/101976535-7705ff80-3c89-11eb-9589-fba92821b140.jpg)
 
 
 # パラメーター
